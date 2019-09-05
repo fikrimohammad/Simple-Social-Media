@@ -33,10 +33,15 @@ class UserController extends Controller
 
     public function assign_manager(Request $request, User $user)
     {
+        echo $request->Input('manager_id');
         $manager = User::findOrFail($request->Input('manager_id'));
 
         $user->manager()->associate($manager);
-        // $manager->subordinates()->save($user);
+        $manager->subordinates()->save($user);
+
+        $user->save();
+        $manager->save();
+
         return $user;
     }
 
