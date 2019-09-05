@@ -24,4 +24,10 @@ class User extends Model
         return $this->belongsToMany('App\User', 'friendship', 'user_id', 'friend_id')
                     ->withPivot('approved');
     }
+
+    public function conversations(){
+        return $this->belongsToMany('App\User', 'conversation', 'host_id', 'recipient_id')
+                    ->using('App\Conversation')
+                    ->withPivot('conversation_code');
+    }
 }
