@@ -34,6 +34,7 @@ Route::prefix('users')->group(function () {
 
     Route::prefix('conversations')->group(function () {
         Route::get('{user}/list', 'MessageController@list_conversation');
-        Route::post('send_message', 'MessageController@send_message');
+        Route::post('message/send', 'MessageController@send_message');
+        Route::get('{conversation_code}/message/list', 'MessageController@list_message');
     });
 });
