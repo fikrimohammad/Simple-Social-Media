@@ -16,14 +16,21 @@ class FriendshipController extends Controller
     public function create_friend_request(Request $request)
     {
         $user = User::findOrFail($request->input('user_id'));
-        $user->friends()->attach($request->input('friend_id'), ['approved' => 0]);
+        $friend =  User::findOrFail($request->input('friend_id'));
+
+        $friend->friends()->attach($request->input('user_id'), ['approved' => 0]);
+
         return $user->friends()->wherePivot('approved', '=', 0)->get();
     }
 
     public function approve_friend_request(Request $request, User $user)
     {
         $friend_id = $request->input('friend_id');
+        $friend = User::findOrFail($request->input('friend_id'));
+
         $user->friends()->updateExistingPivot($friend_id, ['approved' => 1]);
+        $friend->friends()->attach($user->id, ['approved' => 1]);
+
         return $user->friends()->wherePivot('approved', '=', 1)->get();
     }
 
