@@ -12,8 +12,6 @@ class User extends Model
         'name'
     ];
 
-    protected $with = ['friends', 'manager', 'subordinates'];
-
     public function manager(){
         return $this->belongsTo('App\User', 'manager_id');
     }
@@ -23,6 +21,7 @@ class User extends Model
     }
 
     public function friends(){
-        return $this->belongsToMany('App\User', 'friendship', 'user_id', 'friend_id')->withPivot('approved');
+        return $this->belongsToMany('App\User', 'friendship', 'user_id', 'friend_id')
+                    ->withPivot('approved');
     }
 }
