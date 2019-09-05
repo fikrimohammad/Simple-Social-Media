@@ -16,15 +16,24 @@ use Illuminate\Http\Request;
 //     return $request->user();
 // });
 
-Route::get('/users/list', 'UserController@index')->name('users.index');
-Route::post('/users/create', 'UserController@create')->name('users.create');
-Route::get('/users/{user}/manager', 'UserController@show_manager')->name('users.manager');
-Route::put('/users/{user}/manager', 'UserController@assign_manager')->name('users.assign_manager');
-Route::get('/users/{user}/subordinates', 'UserController@show_subordinates')->name('users.subordinates');
-Route::put('/users/{user}', 'UserController@update')->name('users.update');
-Route::delete('/users/{user}', 'UserController@destroy')->name('users.destroy');
+Route::prefix('users')->group(function () {
+    Route::get('', 'UserController@index');
+    Route::post('', 'UserController@create');
+    Route::get('{user}/manager', 'UserController@show_manager');
+    Route::put('{user}/manager', 'UserController@assign_manager');
+    Route::get('{user}/subordinates', 'UserController@show_subordinates');
+    Route::put('{user}', 'UserController@update');
+    Route::delete('{user}', 'UserController@destroy');
 
-Route::get('/friends/{user}/list', 'FriendshipController@list_friend')->name('friends.list');
-Route::get('/friends/{user}/request/list', 'FriendshipController@list_friend_request')->name('friend_requests.list');
-Route::post('/friends/request/create', 'FriendshipController@create_friend_request')->name('friend_requests.create');
-Route::put('/friends/{user}/request/approve', 'FriendshipController@approve_friend_request')->name('friend_requests.approve');
+    Route::prefix('friends')->group(function () {
+        Route::get('{user}/list', 'FriendshipController@list_friend');
+        Route::get('request/{user}/list', 'FriendshipController@list_friend_request');
+        Route::post('request/create', 'FriendshipController@create_friend_request');
+        Route::put('request/{user}/approve', 'FriendshipController@approve_friend_request');
+    });
+
+    Route::prefix('conversations')->group(function () {
+        Route::get('{user}/list', 'MessageController@list_conversation');
+        Route::post('send_message', 'MessageController@send_message');
+    });
+});
