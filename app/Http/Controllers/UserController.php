@@ -9,7 +9,11 @@ class UserController extends Controller
 {
     public function index()
     {
-        return User::all();
+        $users = User::all();
+        return response()->json([
+            'message' => 'Successfully retrieved',
+            'data' => $users
+        ], 200);
     }
 
     public function create(Request $request)
@@ -18,17 +22,26 @@ class UserController extends Controller
             'name' => $request->Input('name')
         ]);
 
-        return $user;
+        return response()->json([
+            'message' => 'User with name '. $user->name .' successfully created.',
+            'data' => $user
+        ], 200);
     }
 
     public function show_manager(User $user)
     {
-        return $user->manager;
+        return response()->json([
+            'message' => 'Successfully retrieved',
+            'data' => $user->manager
+        ], 200);
     }
 
     public function show_subordinates(User $user)
     {
-        return $user->subordinates;
+        return response()->json([
+            'message' => 'Successfully retrieved',
+            'data' => $user->subordinates
+        ], 200);
     }
 
     public function assign_manager(Request $request, User $user)
@@ -37,22 +50,31 @@ class UserController extends Controller
         $user->manager()->associate($manager);
         $user->save();
 
-        return $user;
+        return response()->json([
+            'message' => 'The appointment of '. $manager->name.' as manager of '. $user->name .' was successfully carried out.',
+            'data' => $user
+        ], 201);
     }
 
     public function update(Request $request, User $user)
     {
         $user->update($request->all());
 
-        return response()->json($user);
+        return response()->json([
+            'message' => 'User with name '. $user->name .' successfully updated.',
+            'data' => $user
+        ], 201);
     }
 
     public function destroy(User $user)
     {
+        $user_name = $user->name;
         $user->manager()->dissociate();
         $user->friends()->detach();
         $user->delete();
 
-        return response()->json(null, 204);
+        return response()->json([
+            'message' => 'User with name '. $user_name .' successfully deleted.'
+        ], 204);
     }
 }

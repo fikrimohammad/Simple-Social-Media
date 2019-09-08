@@ -15,12 +15,13 @@ class FriendshipController extends Controller
 
     public function create_friend_request(Request $request)
     {
-        $user = User::findOrFail($request->input('user_id'));
         $friend =  User::findOrFail($request->input('friend_id'));
 
         $friend->friends()->attach($request->input('user_id'), ['approved' => 0]);
 
-        return $user->friends()->wherePivot('approved', '=', 0)->get();
+        return response()->json([
+            'message' => 'Friend request with '. $friend->name .' successfully sent.'
+        ], 200);
     }
 
     public function approve_friend_request(Request $request, User $user)
@@ -31,7 +32,9 @@ class FriendshipController extends Controller
         $user->friends()->updateExistingPivot($friend_id, ['approved' => 1]);
         $friend->friends()->attach($user->id, ['approved' => 1]);
 
-        return $user->friends()->wherePivot('approved', '=', 1)->get();
+        return response()->json([
+            'message' => 'Friend request from '. $friend->name .' successfully approved.'
+        ], 201);
     }
 
     public function list_friend(User $user)
